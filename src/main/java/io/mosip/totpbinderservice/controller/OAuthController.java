@@ -109,7 +109,7 @@ public class OAuthController {
         accessTokenResponseDTO.setExpiresIn(accessTokenResponse.getExpires_in());
         accessTokenResponseDTO.setIdToken(accessTokenResponse.getId_token());
 
-//        System.out.println("Token Recieved");
+        System.out.println("Token Recieved");
 
         return accessTokenResponseDTO;
     }

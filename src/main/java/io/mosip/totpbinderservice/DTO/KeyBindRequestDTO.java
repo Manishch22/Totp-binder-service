@@ -1,27 +1,18 @@
 package io.mosip.totpbinderservice.DTO;
 
-import io.mosip.totpbinderservice.helper.Constants;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotEmpty;
+
 public class KeyBindRequestDTO {
-    private String key;
+	@NotEmpty(message = "invalid totp key")
+    private Map<String, Object> totpKey;
 
-    public String getKey() {
-        return key;
+    public Map<String, Object> getTotpKey() {
+        return totpKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public MultiValueMap<String, String> toMap() {
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add(Constants.KEY, this.key);
-        return map;
+    public void setTotpKey(Map<String, Object> key) {
+        this.totpKey = key;
     }
 }
