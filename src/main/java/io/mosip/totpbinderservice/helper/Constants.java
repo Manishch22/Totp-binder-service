@@ -9,4 +9,5 @@ public class Constants {
     public static final String REDIRECT_URI = "redirect_uri";
     public static final String CODE = "code";
     public static final String KEY = "key";
+    public static final String UNKNOWN_ERROR = "unknown_error";
 }

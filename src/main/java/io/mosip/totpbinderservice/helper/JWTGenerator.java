@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.springframework.stereotype.Component;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -19,9 +20,10 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
 
+@Component
 public class JWTGenerator {
 
-    public static String generateSignedJwt(String clientId, String jwtAlgorithm, String jwtExpirationTime, String clientPrivateKey, String TotpBinderServiceServiceUrl) throws JOSEException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
+    public String generateSignedJwt(String clientId, String jwtAlgorithm, String jwtExpirationTime, String clientPrivateKey, String TotpBinderServiceServiceUrl) throws JOSEException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
         // Parse the private key
         RSAPrivateKey privateKey = parsePrivateKey(clientPrivateKey);
 
@@ -47,7 +49,7 @@ public class JWTGenerator {
         return signedJWT.serialize();
     }
 
-    private static RSAPrivateKey parsePrivateKey(String clientPrivateKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
+    private RSAPrivateKey parsePrivateKey(String clientPrivateKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
         byte[] keyBytes = Base64.getDecoder().decode(clientPrivateKey);
         String jwkString = new String(keyBytes);
 
