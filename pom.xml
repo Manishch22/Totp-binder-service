@@ -18,6 +18,11 @@
 		<springdoc.version>1.5.10</springdoc.version>
 	</properties>
 	<dependencies>
+	<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>

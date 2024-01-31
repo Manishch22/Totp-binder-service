@@ -1,18 +1,12 @@
 package io.mosip.totpbinderservice.service.Impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.JOSEException;
-import io.mosip.totpbinderservice.dto.AccessTokenRequestDTO;
-import io.mosip.totpbinderservice.dto.AccessTokenResponse;
-import io.mosip.totpbinderservice.dto.AccessTokenResponseDTO;
-import io.mosip.totpbinderservice.exception.BindingException;
-import io.mosip.totpbinderservice.helper.Constants;
-import io.mosip.totpbinderservice.helper.JWTGenerator;
-import io.mosip.totpbinderservice.service.OAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,11 +15,15 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.text.ParseException;
-import java.util.Objects;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.mosip.totpbinderservice.dto.AccessTokenRequestDTO;
+import io.mosip.totpbinderservice.dto.AccessTokenResponse;
+import io.mosip.totpbinderservice.dto.AccessTokenResponseDTO;
+import io.mosip.totpbinderservice.exception.BindingException;
+import io.mosip.totpbinderservice.service.OAuthService;
+import io.mosip.totpbinderservice.util.Constants;
+import io.mosip.totpbinderservice.util.JWTGenerator;
 
 @Service
 public class OAuthServiceImpl implements OAuthService {
@@ -64,25 +62,21 @@ public class OAuthServiceImpl implements OAuthService {
     private String jwtExpiryTime;
 
     @Override
-    public AccessTokenResponseDTO getAccessToken(AccessTokenRequestDTO tokenRequest) throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException, BindingException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    public AccessTokenResponseDTO getAccessToken(AccessTokenRequestDTO tokenRequest) throws BindingException {
+        String signedJWT = jwtGenerator.generateSignedJwt(clientID, jwtAlgorithm, jwtExpiryTime, privateKey, tokenEndpoint);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add(Constants.GRANT_TYPE, grantType);
         map.add(Constants.CLIENT_ID, clientID);
-
-        String signedJWT = jwtGenerator.generateSignedJwt(clientID, jwtAlgorithm, jwtExpiryTime, privateKey, tokenEndpoint);
-
         map.add(Constants.CLIENT_ASSERTION, signedJWT);
         map.add(Constants.CLIENT_ASSERTION_TYPE, clientAssertionType);
-
         map.add(Constants.CODE, tokenRequest.getCode());
         map.add(Constants.REDIRECT_URI, redirectURI);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(tokenEndpoint);
-//        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(Objects.requireNonNullElse(tokenEndpoint, ""));
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
         ResponseEntity<String> responseEntity = null;
 
@@ -97,7 +91,7 @@ public class OAuthServiceImpl implements OAuthService {
             if (responseEntity != null && responseEntity.getBody() != null) {
                 accessTokenResponse = objectMapper.readValue(responseEntity.getBody(), AccessTokenResponse.class);
             } else {
-                System.out.println("responseEntity is null");
+            	
             }
         } catch (Exception ex) {
             throw new BindingException(ex.getMessage());
@@ -107,9 +101,6 @@ public class OAuthServiceImpl implements OAuthService {
         accessTokenResponseDTO.setAccessToken(accessTokenResponse.getAccess_token());
         accessTokenResponseDTO.setExpiresIn(accessTokenResponse.getExpires_in());
         accessTokenResponseDTO.setIdToken(accessTokenResponse.getId_token());
-
-        System.out.println("Token Recieved");
-
         return accessTokenResponseDTO;
     }
 }

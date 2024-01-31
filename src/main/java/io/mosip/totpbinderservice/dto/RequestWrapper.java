@@ -8,25 +8,12 @@ package io.mosip.totpbinderservice.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
+
+@Data
 public class RequestWrapper<T> {
 
     private String requestTime;
-
-    public String getRequestTime() {
-		return requestTime;
-	}
-
-	public void setRequestTime(String requestTime) {
-		this.requestTime = requestTime;
-	}
-
-	public T getRequest() {
-		return request;
-	}
-
-	public void setRequest(T request) {
-		this.request = request;
-	}
 
 	@NotNull(message = "invalid request")
     @Valid

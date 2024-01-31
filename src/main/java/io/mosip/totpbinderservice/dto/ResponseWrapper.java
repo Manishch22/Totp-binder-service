@@ -8,26 +8,11 @@ package io.mosip.totpbinderservice.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class ResponseWrapper<T> {
 
-    public String getResponseTime() {
-		return responseTime;
-	}
-	public void setResponseTime(String responseTime) {
-		this.responseTime = responseTime;
-	}
-	public T getResponse() {
-		return response;
-	}
-	public void setResponse(T response) {
-		this.response = response;
-	}
-	public List<Error> getErrors() {
-		return errors;
-	}
-	public void setErrors(List<Error> errors) {
-		this.errors = errors;
-	}
 	private String responseTime;
     private T response;
     private List<Error> errors = new ArrayList<>();

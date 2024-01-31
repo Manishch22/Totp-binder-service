@@ -1,12 +1,14 @@
 package io.mosip.totpbinderservice.controller;
 
+import io.mosip.totpbinderservice.dto.JwkDTO;
 import io.mosip.totpbinderservice.dto.KeyBindRequestDTO;
 import io.mosip.totpbinderservice.dto.KeyBindResponseDTO;
-
-import io.mosip.totpbinderservice.exception.BindingException;
+import io.mosip.totpbinderservice.dto.ResponseWrapper;
 import io.mosip.totpbinderservice.service.KeyBindingService;
 import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,19 +24,18 @@ public class KeyBindingController {
 
     @PostMapping("/totp-key-bind")
     @Operation(summary = "totp key binding", description = "totp key binding")
-    public KeyBindResponseDTO bindKey (@RequestBody KeyBindRequestDTO bindRequestDTO, @RequestHeader("Authorization") String bearerToken) {
-
-        if (bindRequestDTO.getTotpKey() == null || bindRequestDTO.getTotpKey().isEmpty()) {
-            throw new BindingException("The 'totpKey' map is required in the request body.");
-        }
-
-        if (!bindRequestDTO.getTotpKey().containsKey("key")) {
-            throw new BindingException("The 'key' field is required in the 'totpKey' map.");
-        }
-
-        KeyBindResponseDTO response = keyBindingService.sendBindingKey(bindRequestDTO, bearerToken);
-
+    public ResponseWrapper<KeyBindResponseDTO> bindKey (@RequestBody KeyBindRequestDTO bindRequestDTO, @RequestHeader("Authorization") String bearerToken) {
+    	ResponseWrapper<KeyBindResponseDTO> response = new ResponseWrapper<KeyBindResponseDTO>();
+        response.setResponse(keyBindingService.sendBindingKey(bindRequestDTO, bearerToken));
         return response;
+    }
+    
+    @GetMapping("/key")
+    @Operation(summary = "totp secret key generation", description = "totp secret key generation")
+    public ResponseWrapper<JwkDTO> generateKey() {
+    	ResponseWrapper<JwkDTO> response = new ResponseWrapper<JwkDTO>();
+    	response.setResponse(keyBindingService.getKey());
+		return response;
     }
 
 }

@@ -1,4 +1,4 @@
-package io.mosip.totpbinderservice.helper;
+package io.mosip.totpbinderservice.util;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
@@ -9,6 +9,9 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+
+import io.mosip.totpbinderservice.exception.BindingException;
+
 import org.springframework.stereotype.Component;
 
 import java.security.KeyFactory;
@@ -23,40 +26,31 @@ import java.util.Date;
 @Component
 public class JWTGenerator {
 
-    public String generateSignedJwt(String clientId, String jwtAlgorithm, String jwtExpirationTime, String clientPrivateKey, String TotpBinderServiceServiceUrl) throws JOSEException, NoSuchAlgorithmException, InvalidKeySpecException, ParseException {
-        // Parse the private key
-        RSAPrivateKey privateKey = parsePrivateKey(clientPrivateKey);
-
-        // Create JWT header
-        JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.parse(jwtAlgorithm))
-                .type(JOSEObjectType.JWT)
-                .build();
-
-        // Create JWT claims
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .issuer(clientId)
-                .subject(clientId)
-                .audience(TotpBinderServiceServiceUrl)
-                .issueTime(new Date())
-                .expirationTime(new Date(System.currentTimeMillis() + parseExpirationTime(jwtExpirationTime)))
-                .build();
-
-        // Create the signed JWT
-        SignedJWT signedJWT = new SignedJWT(header, claimsSet);
-        signedJWT.sign(new RSASSASigner(privateKey));
-
-        // Serialize the JWT to a string
-        return signedJWT.serialize();
+    public String generateSignedJwt(String clientId, String jwtAlgorithm, String jwtExpirationTime, String clientPrivateKey, String TotpBinderServiceServiceUrl) {
+		try {
+			RSAPrivateKey privateKey = parsePrivateKey(clientPrivateKey);
+			JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.parse(jwtAlgorithm))
+	                .type(JOSEObjectType.JWT)
+	                .build();
+			JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+	                .issuer(clientId)
+	                .subject(clientId)
+	                .audience(TotpBinderServiceServiceUrl)
+	                .issueTime(new Date())
+	                .expirationTime(new Date(System.currentTimeMillis() + parseExpirationTime(jwtExpirationTime)))
+	                .build();
+			SignedJWT signedJWT = new SignedJWT(header, claimsSet);
+			signedJWT.sign(new RSASSASigner(privateKey));
+			return signedJWT.serialize();
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException | ParseException | JOSEException e) {
+			throw new BindingException(e.getMessage());
+		}
     }
 
     private RSAPrivateKey parsePrivateKey(String clientPrivateKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
         byte[] keyBytes = Base64.getDecoder().decode(clientPrivateKey);
         String jwkString = new String(keyBytes);
-
-        // Parse JWK
         JWK jwk = JWK.parse(jwkString);
-
-        // Convert JWK to RSAPrivateKey
         RSAKey rsaKey = (RSAKey) jwk;
 
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");

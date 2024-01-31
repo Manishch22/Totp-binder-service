@@ -1,14 +1,14 @@
 package io.mosip.totpbinderservice.exception;
 
-import io.mosip.totpbinderservice.helper.Constants;
+import io.mosip.totpbinderservice.util.ErrorConstants;
 
 public class BindingException extends RuntimeException{
 
     private String errorCode;
 
     public BindingException() {
-        super(Constants.UNKNOWN_ERROR);
-        this.errorCode = Constants.UNKNOWN_ERROR;
+        super(ErrorConstants.UNKNOWN_ERROR);
+        this.errorCode = ErrorConstants.UNKNOWN_ERROR;
     }
 
     public BindingException(String errorCode) {
