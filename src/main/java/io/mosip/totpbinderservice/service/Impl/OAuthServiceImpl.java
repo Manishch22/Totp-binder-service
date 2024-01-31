@@ -10,16 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.totpbinderservice.dto.AccessTokenRequestDTO;
-import io.mosip.totpbinderservice.dto.AccessTokenResponse;
 import io.mosip.totpbinderservice.dto.AccessTokenResponseDTO;
+import io.mosip.totpbinderservice.dto.AccessTokenResponse;
 import io.mosip.totpbinderservice.exception.BindingException;
 import io.mosip.totpbinderservice.service.OAuthService;
 import io.mosip.totpbinderservice.util.Constants;
@@ -78,29 +76,25 @@ public class OAuthServiceImpl implements OAuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-        ResponseEntity<String> responseEntity = null;
 
         try {
-            responseEntity = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, String.class);
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            throw new BindingException(ex.getMessage());
-        }
-
-        AccessTokenResponse accessTokenResponse = null;
-        try {
-            if (responseEntity != null && responseEntity.getBody() != null) {
-                accessTokenResponse = objectMapper.readValue(responseEntity.getBody(), AccessTokenResponse.class);
-            } else {
-            	
+        	ResponseEntity<String> responseEntity = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, String.class);
+            
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+            	AccessTokenResponse accessTokenResponse = objectMapper.readValue(responseEntity.getBody(), AccessTokenResponse.class);
+                
+            	AccessTokenResponseDTO accessTokenResponseDTO = new AccessTokenResponseDTO();
+                accessTokenResponseDTO.setAccessToken(accessTokenResponse.getAccess_token());
+                accessTokenResponseDTO.setExpiresIn(accessTokenResponse.getExpires_in());
+                accessTokenResponseDTO.setIdToken(accessTokenResponse.getId_token());
+                return accessTokenResponseDTO;
             }
-        } catch (Exception ex) {
-            throw new BindingException(ex.getMessage());
+            
+            throw new BindingException("Error response received with status: " + responseEntity.getStatusCode());
+        } catch (BindingException ex) {
+        	throw ex;
+        } catch (Exception e) {
+        	throw new BindingException("unable to get access token: " + e.getMessage());
         }
-
-        AccessTokenResponseDTO accessTokenResponseDTO = new AccessTokenResponseDTO();
-        accessTokenResponseDTO.setAccessToken(accessTokenResponse.getAccess_token());
-        accessTokenResponseDTO.setExpiresIn(accessTokenResponse.getExpires_in());
-        accessTokenResponseDTO.setIdToken(accessTokenResponse.getId_token());
-        return accessTokenResponseDTO;
     }
 }
