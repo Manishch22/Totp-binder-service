@@ -26,6 +26,17 @@ import java.util.Date;
 @Component
 public class JWTGenerator {
 
+	/**
+	 * Generates a signed JWT using the provided parameters.
+	 *
+	 * @param clientId
+	 * @param jwtAlgorithm
+	 * @param jwtExpirationTime
+	 * @param clientPrivateKey
+	 * @param TotpBinderServiceServiceUrl
+	 * @return Serialized string representation of the generated signed JWT.
+	 * @throws BindingException
+	 */
     public String generateSignedJwt(String clientId, String jwtAlgorithm, String jwtExpirationTime, String clientPrivateKey, String TotpBinderServiceServiceUrl) {
 		try {
 			RSAPrivateKey privateKey = parsePrivateKey(clientPrivateKey);
@@ -47,6 +58,16 @@ public class JWTGenerator {
 		}
     }
 
+	/**
+	 * Parses the client's private key from the provided base64-encoded string.
+	 *
+	 * @param clientPrivateKey
+	 * @return RSAPrivateKey instance representing the parsed private key.
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 * @throws ParseException
+	 * @throws JOSEException
+	 */
     private RSAPrivateKey parsePrivateKey(String clientPrivateKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ParseException, JOSEException {
         byte[] keyBytes = Base64.getDecoder().decode(clientPrivateKey);
         String jwkString = new String(keyBytes);
@@ -59,6 +80,12 @@ public class JWTGenerator {
         return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
     }
 
+	/**
+	 * Parses the expiration time from string to milliseconds.
+	 *
+	 * @param expirationTime
+	 * @return The expiration time in milliseconds.
+	 */
     private static long parseExpirationTime(String expirationTime) {
         long duration = Long.parseLong(expirationTime);
         return duration * 1000; // seconds to milliseconds

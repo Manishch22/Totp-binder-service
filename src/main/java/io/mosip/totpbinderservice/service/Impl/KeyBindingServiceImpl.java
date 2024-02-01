@@ -46,7 +46,7 @@ public class KeyBindingServiceImpl implements KeyBindingService {
     private RestTemplate restTemplate;
 
     @Override
-    public KeyBindResponseDTO sendBindingKey(KeyBindRequestDTO bindRequestDTO, String header) {
+    public KeyBindResponseDTO sendBindingKey(KeyBindRequestDTO bindRequestDTO, String header) throws BindingException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -83,7 +83,7 @@ public class KeyBindingServiceImpl implements KeyBindingService {
     }
 
 	@Override
-	public JwkDTO getKey() {
+	public JwkDTO getKey() throws BindingException {
 		try {
 			KeyGenerator gen = KeyGenerator.getInstance("AES");
 			gen.init(128);
