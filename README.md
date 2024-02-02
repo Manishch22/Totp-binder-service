@@ -146,7 +146,9 @@ mosip.mock.totp-generation-algo=HmacSHA1
 **Notes:**
    * OTP manager not used to validate the TOTP as this required changes in MOSIP kernel core. Post discussion with the MOSIP team, implemented TOTP validate validations in mock identity itself.
    * Binding details have not stored in registry as bind wallet due to not having public key and certificate.
+   * Random unique token is generated and encoded with Base32 instead of Base64 due to limitation of [google authenticator](https://github.com/google/google-authenticator/wiki/Key-Uri-Format). With Base32 encode, able to scan the QR code with both google and microsft authenticators.   
    * Tested the TOTP based authetication with health service portal by using google and microsoft authenticators.
+   * Unit tests added for all services with coverage of more than 95%.
 # How To Test:
 
 ### Prerequisites
