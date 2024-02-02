@@ -39,70 +39,67 @@ import io.mosip.totpbinderservice.util.ErrorConstants;
 @Service
 public class KeyBindingServiceImpl implements KeyBindingService {
 
-    @Value("${mosip.iam.binding_endpoint}")
-    private String bindingEndpoint;
+	@Value("${mosip.iam.binding_endpoint}")
+	private String bindingEndpoint;
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private RestTemplate restTemplate;
 
-    @Override
-    public KeyBindResponseDTO sendBindingKey(KeyBindRequestDTO bindRequestDTO, String header) throws BindingException {
+	@Override
+	public KeyBindResponseDTO sendBindingKey(KeyBindRequestDTO bindRequestDTO, String header) throws BindingException {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", header);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", header);
 
-        RequestWrapper<KeyBindRequestDTO> request = new RequestWrapper<KeyBindRequestDTO>();
-        request.setRequest(bindRequestDTO);
-        request.setRequestTime(LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+		RequestWrapper<KeyBindRequestDTO> request = new RequestWrapper<KeyBindRequestDTO>();
+		request.setRequest(bindRequestDTO);
+		request.setRequestTime(
+				LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(bindingEndpoint);
-        HttpEntity<RequestWrapper<KeyBindRequestDTO>> entity = new HttpEntity<>(request, headers);
+		UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(bindingEndpoint);
+		HttpEntity<RequestWrapper<KeyBindRequestDTO>> entity = new HttpEntity<>(request, headers);
 
-        try {
-        	ResponseEntity<ResponseWrapper<KeyBindResponseDTO>> responseEntity = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST,
-                    entity, new ParameterizedTypeReference<>() {});
+		try {
+			ResponseEntity<ResponseWrapper<KeyBindResponseDTO>> responseEntity = restTemplate
+					.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, new ParameterizedTypeReference<>() {
+					});
 
-            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
-                var responseWrapper = responseEntity.getBody();
-                
-                if(responseWrapper.getResponse() != null) {
-                    return responseWrapper.getResponse();
-                }
-                
-                throw new BindingException(CollectionUtils.isEmpty(responseWrapper.getErrors()) ?
-                		ErrorConstants.KEY_BINDING_FAILED : responseWrapper.getErrors().get(0).getErrorCode());
-            }
+			if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+				var responseWrapper = responseEntity.getBody();
+				if (responseWrapper.getResponse() != null) {
+					return responseWrapper.getResponse();
+				}
+				throw new BindingException(
+						CollectionUtils.isEmpty(responseWrapper.getErrors()) ? ErrorConstants.KEY_BINDING_FAILED
+								: responseWrapper.getErrors().get(0).getErrorCode());
+			}
 
-            throw new BindingException("Error response received with status: " + responseEntity.getStatusCode());
-        } catch (BindingException ex) {
-        	throw ex;
-        } catch (Exception e) {
-            throw new BindingException(ErrorConstants.KEY_BINDING_FAILED + ": " + e.getMessage());
-        }
-    }
+			throw new BindingException("Error response received with status: " + responseEntity.getStatusCode());
+		} catch (Exception e) {
+			throw new BindingException(ErrorConstants.KEY_BINDING_FAILED + ": " + e.getMessage());
+		}
+	}
 
 	@Override
 	public JwkDTO getKey() throws BindingException {
 		try {
 			KeyGenerator gen = KeyGenerator.getInstance("AES");
 			gen.init(128);
-	    	SecretKey aesKey = gen.generateKey();
+			SecretKey aesKey = gen.generateKey();
 
-	    	JWK jwk = new OctetSequenceKey.Builder(aesKey)
-	    	    .keyID(UUID.randomUUID().toString())
-	    	    .algorithm(EncryptionMethod.A128GCM)
-	    	    .build();
-	    	JwkDTO jwkDTO = new JwkDTO();
-	    	jwkDTO.setKty((String)jwk.getRequiredParams().get("kty"));
-	    	jwkDTO.setKid(jwk.getKeyID());
-	    	
-	    	String key = (String)jwk.getRequiredParams().get("k");
-	    	Base32 base32 = new Base32();
-	        String encodedString = base32.encodeToString(key.getBytes());
-	    	jwkDTO.setKey(encodedString);
-	    	
-	    	return jwkDTO;
+			JWK jwk = new OctetSequenceKey.Builder(aesKey).keyID(UUID.randomUUID().toString())
+					.algorithm(EncryptionMethod.A128GCM).build();
+			JwkDTO jwkDTO = new JwkDTO();
+			jwkDTO.setKty((String) jwk.getRequiredParams().get("kty"));
+			jwkDTO.setKid(jwk.getKeyID());
+
+			String key = (String) jwk.getRequiredParams().get("k");
+			Base32 base32 = new Base32();
+			String encodedString = base32.encodeToString(key.getBytes());
+			jwkDTO.setKey(encodedString);
+
+			return jwkDTO;
 		} catch (NoSuchAlgorithmException e) {
 			throw new BindingException("key generation failed");
 		}
