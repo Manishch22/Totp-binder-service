@@ -27,7 +27,17 @@ This service is responsible for generating TOTP key and binding to the UIN/VID o
 
 ## UI Configurations :
 ```
+ENV TOTP_BINDER_SERVICE_URL=$totp_binder_service_url
+ENV CLIENT_ID=$client_id
+ENV TOTP_DIGITS=$totp_digits
+ENV TOTP_PERIOD=$totp_period
+ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
+ENV TOTP_ALGORITHM=$totp_algorithm
 ```
+
+## Deployment:
+
+Use the helm charts present [here](helm/) for deployment.
 
 # Usage of TOTP 
 
