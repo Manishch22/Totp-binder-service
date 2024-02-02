@@ -18,6 +18,12 @@ public class OAuthController {
     @Autowired
     private OAuthService oAuthService;
 
+    /**
+     * Handles the request for obtaining an OAuth access token.
+     *
+     * @param tokenRequest
+     * @return ResponseWrapper containing the response from the OAuth token retrieval operation.
+     */
     @PostMapping("/token")
     public ResponseWrapper<AccessTokenResponseDTO> getToken(@RequestBody AccessTokenRequestDTO tokenRequest) {
     	ResponseWrapper<AccessTokenResponseDTO> response = new ResponseWrapper<AccessTokenResponseDTO>();

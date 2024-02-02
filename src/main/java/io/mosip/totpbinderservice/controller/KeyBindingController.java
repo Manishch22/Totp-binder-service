@@ -22,6 +22,13 @@ public class KeyBindingController {
     @Autowired
     private KeyBindingService keyBindingService;
 
+    /**
+     * Handles the TOTP key binding operation.
+     *
+     * @param bindRequestDTO
+     * @param bearerToken
+     * @return ResponseWrapper containing the response from the TOTP key binding operation.
+     */
     @PostMapping("/totp-key-bind")
     @Operation(summary = "totp key binding", description = "totp key binding")
     public ResponseWrapper<KeyBindResponseDTO> bindKey (@RequestBody KeyBindRequestDTO bindRequestDTO, @RequestHeader("Authorization") String bearerToken) {
@@ -29,7 +36,12 @@ public class KeyBindingController {
         response.setResponse(keyBindingService.sendBindingKey(bindRequestDTO, bearerToken));
         return response;
     }
-    
+
+    /**
+     * Handles the TOTP secret key generation operation.
+     *
+     * @return ResponseWrapper containing the generated JWK (JSON Web Key).
+     */
     @GetMapping("/key")
     @Operation(summary = "totp secret key generation", description = "totp secret key generation")
     public ResponseWrapper<JwkDTO> generateKey() {
@@ -37,5 +49,4 @@ public class KeyBindingController {
     	response.setResponse(keyBindingService.getKey());
 		return response;
     }
-
 }

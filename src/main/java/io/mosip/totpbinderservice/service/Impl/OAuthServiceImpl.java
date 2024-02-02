@@ -61,6 +61,8 @@ public class OAuthServiceImpl implements OAuthService {
 
     @Override
     public AccessTokenResponseDTO getAccessToken(AccessTokenRequestDTO tokenRequest) throws BindingException {
+
+        // Generate a signed JWT for authentication
         String signedJWT = jwtGenerator.generateSignedJwt(clientID, jwtAlgorithm, jwtExpiryTime, privateKey, tokenEndpoint);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
