@@ -50,7 +50,7 @@ ENV TOTP_ALGORITHM=$totp_algorithm
 
 # Usage of TOTP 
 
-## Esignet customization:
+## eSsignet customization:
 
 For usage of TOTP, customized eSignet application. Existing eSignet application has been customized based on the guidelines provided [here](https://github.com/mosip/hackathon/blob/master/Decode-2023/totp_auth_for_esignet/TOTP_Implementation_for_MOSIP_eSignet.pdf).
 
@@ -111,7 +111,7 @@ The following configuration keys should be added/modified in **esignet-default.p
 	}}"
  ```
 
-### Deployment of esignet service and ui:
+### Deployment of eSignet service and ui:
 Please build the latest mock-esignet-integration-impl and put the built jar(or the provided jar) in the artifactory.
 For UI modified the public/locales/en.json for Login with TOTP placeholders, so update the same in the artifactory 
 
