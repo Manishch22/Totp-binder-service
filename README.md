@@ -25,15 +25,6 @@ This service is responsible for generating TOTP key and binding to the UIN/VID o
 **Note :**
  Configuration file name for this application should be 'totp-binder-service-default.properties'.
 
-## UI/Environment Configurations :
-```
-ENV TOTP_BINDER_SERVICE_URL=$totp_binder_service_url
-ENV CLIENT_ID=$client_id
-ENV TOTP_DIGITS=$totp_digits
-ENV TOTP_PERIOD=$totp_period
-ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
-ENV TOTP_ALGORITHM=$totp_algorithm
-```
 ## API Documentation:
 Please refer TOTP_Binder_Service_API_Documentation.docx in [this](docs/) for API documentation.
 
@@ -45,20 +36,33 @@ Use the helm charts present [here](helm/) for deployment. Add the host name acco
 
 This user interface will bind TOTP key with resident/user UIN/VID. This code is available totp-binder-ui repo.
 
+## UI/Environment Configurations :
+```
+ENV TOTP_BINDER_SERVICE_URL=$totp_binder_service_url
+ENV CLIENT_ID=$client_id
+// valid values are 6(default) and 8
+ENV TOTP_DIGITS=$totp_digits
+ENV TOTP_PERIOD=$totp_period
+ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
+// valid values are SHA1(default), SHA256, SHA512
+ENV TOTP_ALGORITHM=$totp_algorithm
+```
+
 # Usage of TOTP 
 
-## Info:
+## Esignet customization:
 
 For usage of TOTP, customized eSignet application. Existing eSignet application has been customized based on the guidelines provided [here](https://github.com/mosip/hackathon/blob/master/Decode-2023/totp_auth_for_esignet/TOTP_Implementation_for_MOSIP_eSignet.pdf).
 
-## Configurations:
+### Configuration modifications:
 The following configuration keys should be added/modified in **esignet-default.properties**.
 ```
   // mock identiy key binding url
   mosip.esignet.mock.authenticator.key-binding-url=${mosip.api.public.mock.url}/v1/mock-identity-system/key-binding
+```
 
   Along with above configuration have to modify amr-acr-mapping.json file to allow TOTP based authentication as below.
-
+```
     "{
 	"amr": {
 		"PIN": [
@@ -107,13 +111,17 @@ The following configuration keys should be added/modified in **esignet-default.p
 	}}"
  ```
 
-# mock-identity customization:
+### Deployment of esignet service and ui:
+Please build the latest mock-esignet-integration-impl and use this jar in the artifactory.
+For UI modified the public/locales/en.json for Login with TOTP placeholders, so update the same in the artifactory 
 
-As of now used mock identity to test this TOTP based authentication. MOCK Identity application has been customized to support TOTP based authentication as per [requirements](https://github.com/mosip/hackathon/blob/master/Decode-2023/totp_auth_for_esignet/TOTP_Implementation_for_MOSIP_eSignet.pdf)
+## Mock-identity customization:
 
-## Configurations:
+Used mock identity to test this TOTP based authentication. MOCK Identity application has been customized to support TOTP based authentication as per [requirements](https://github.com/mosip/hackathon/blob/master/Decode-2023/totp_auth_for_esignet/TOTP_Implementation_for_MOSIP_eSignet.pdf)
 
-The following configuration keys should be added/modified as below in **mock-identity-system-default.properties**.
+### Configuration modifications:
+
+The following configuration keys should be added/modified in **mock-identity-system-default.properties**.
 ```
 mosip.mock.totp-bind.security.algorithm-name=AES/ECB/PKCS5Padding \
 // this is reference id used to encrypt and decrypt the TOTP key
@@ -121,7 +129,9 @@ mosip.mock.totp-bind.security.secretkey.reference-id=TOTP_BIND \
 // Time To Live value
 mosip.mock.totp-validation-period=30 \
 mosip.mock.totp-transmission-delay=0 \
+//valid values are 6(default) and 8
 mosip.mock.totp-digits=6 \
+//valid values are HmacSHA1(default), HmacSHA256, HmacSHA512
 mosip.mock.totp-generation-algo=HmacSHA1
 ```
 **Note :**
@@ -140,11 +150,11 @@ mosip.mock.totp-generation-algo=HmacSHA1
 # How To Test:
 
 ### Prerequisites
-  * Relying party configuration - This includes creation of relying party with required policies and creation of OIDC client.
+  * Relying party configuration - This includes creation of relying party with required policies and creation of OIDC client, please use Relying_party_and_OIDC_client .postman_collection from [this](docs/).
   * For OIDC client creation required public key in JWK format. This can be generated [here](https://mkjwk.org/).
-  * Update acr(mosip:idp:acr:time-generated-code) for the relying party OIDC client(health service or resident portal) to enable the TOTP based authentication.
+  * Modify acrs(add mosip:idp:acr:time-generated-code) for the relying party OIDC client(health service or resident portal) to enable the TOTP based authentication.
 
-**Notes:**
+**Note:**
  In postman collection update the redirect uri(totp binder ui url) in create client api(last api in collection).
 
 Post creation of above data, update the following configurations.
