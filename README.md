@@ -73,7 +73,33 @@ For usage of TOTP, customized eSignet application. Existing eSignet application 
 		"mosip:idp:acr:biometrics": [
 			"L1-bio-device"
 		]
-	}
-}"
+	}}"
+ 
+
+# mock-identity customization:
+
+As of now used mock identity to test this TOTP based authentication. MOCK Identity application has been customized to support TOTP based authentication as per [requirements](https://github.com/mosip/hackathon/blob/master/Decode-2023/totp_auth_for_esignet/TOTP_Implementation_for_MOSIP_eSignet.pdf)
+
+## Configurations:
+
+mosip.mock.totp-bind.security.algorithm-name=AES/ECB/PKCS5Padding \
+		mosip.mock.totp-bind.security.secretkey.reference-id=TOTP_BIND \
+		mosip.mock.totp-validation-period=30 \
+		mosip.mock.totp-transmission-delay=0 \
+		mosip.mock.totp-digits=6 \
+		mosip.mock.totp-generation-algo=HmacSHA1
+
+
+# How To Test:
+
+### Prerequisites
+  * Relying party configuration - This includes creation of relying party with required policies and creation of OIDC client.
+  * For OIDC client creation required public key in JWK format. Available [here]().
+Post creation of above data, update the following configurations.
+
+
+ 
+ 
+
 
   
