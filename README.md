@@ -26,7 +26,7 @@ This service is responsible for generating TOTP key and binding to the UIN/VID o
  Configuration file name for this application should be 'totp-binder-service-default.properties'.
 
 ## API Documentation:
-Please refer TOTP_Binder_Service_API_Documentation.docx in [this](docs/) for API documentation.
+Please refer TOTP_Binder_Service_API_Documentation.docx present [here](docs/) for API documentation.
 
 ## Deployment:
 
@@ -112,7 +112,7 @@ The following configuration keys should be added/modified in **esignet-default.p
  ```
 
 ### Deployment of esignet service and ui:
-Please build the latest mock-esignet-integration-impl and use this jar in the artifactory.
+Please build the latest mock-esignet-integration-impl and put the built jar(or the provided jar) in the artifactory.
 For UI modified the public/locales/en.json for Login with TOTP placeholders, so update the same in the artifactory 
 
 ## Mock-identity customization:
@@ -150,7 +150,7 @@ mosip.mock.totp-generation-algo=HmacSHA1
 # How To Test:
 
 ### Prerequisites
-  * Relying party configuration - This includes creation of relying party with required policies and creation of OIDC client, please use Relying_party_and_OIDC_client .postman_collection from [this](docs/).
+  * Relying party configuration - This includes creation of relying party with required policies and creation of OIDC client, please use Relying_party_and_OIDC_client .postman_collection present [here](docs/).
   * For OIDC client creation required public key in JWK format. This can be generated [here](https://mkjwk.org/).
   * Modify acrs(add mosip:idp:acr:time-generated-code) for the relying party OIDC client(health service or resident portal) to enable the TOTP based authentication.
 
@@ -161,7 +161,7 @@ Post creation of above data, update the following configurations.
  * mosip.iam.module.clientID and mosip.iam.module.privatekey in totp-binder-service configurations.
  * client Id needs to be updated in UI environment variables.
 
-Once above configurations are over, please follow TOTP_User_Guide.docx in [this](docs/) to test the application.
+Once above configurations are over, please follow TOTP_User_Guide.docx present [here](docs/) to test the application.
 
 
 
