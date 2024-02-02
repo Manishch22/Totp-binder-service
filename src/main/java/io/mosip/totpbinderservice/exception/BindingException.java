@@ -4,7 +4,9 @@ import io.mosip.totpbinderservice.util.ErrorConstants;
 
 public class BindingException extends RuntimeException{
 
-    private String errorCode;
+	private static final long serialVersionUID = 1L;
+
+	private String errorCode;
 
     public BindingException() {
         super(ErrorConstants.UNKNOWN_ERROR);

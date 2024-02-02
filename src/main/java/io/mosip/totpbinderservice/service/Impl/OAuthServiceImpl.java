@@ -93,8 +93,6 @@ public class OAuthServiceImpl implements OAuthService {
             }
             
             throw new BindingException("Error response received with status: " + responseEntity.getStatusCode());
-        } catch (BindingException ex) {
-        	throw ex;
         } catch (Exception e) {
         	throw new BindingException("unable to get access token: " + e.getMessage());
         }
