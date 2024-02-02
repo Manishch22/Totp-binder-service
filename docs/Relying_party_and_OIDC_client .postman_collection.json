@@ -1,0 +1,898 @@
+{
+	"info": {
+		"_postman_id": "9c5ae14c-bfc3-4b77-bd3a-f3ad177b3bc2",
+		"name": "Create Relying party and Demo OIDC client Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19807560",
+		"_collection_link": "https://lunar-space-950125.postman.co/workspace/Team-Workspace~a61185ba-cfd7-47dc-8d27-dc73e61a7cbd/collection/19807560-9c5ae14c-bfc3-4b77-bd3a-f3ad177b3bc2?action=share&source=collection_link&creator=19807560"
+	},
+	"item": [
+		{
+			"name": "PartnerMgmt Auth_Globaladmin",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"var data = jsonData.response.token;",
+							"console.log(data);",
+							"pm.environment.set(\"authtoken\",data);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"string\",\n    \"version\": \"string\",\n    \"requesttime\": \"2023-06-30T01:41:36.128Z\",\n    \"metadata\": {},\n    \"request\": {\n        \"userName\": \"globaladmin\",\n        \"password\": \"Techno@123\",\n        \"appId\": \"admin\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{url}}/v1/authmanager/authenticate/useridPwd",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"authmanager",
+						"authenticate",
+						"useridPwd"
+					]
+				},
+				"description": "RegClient Auth"
+			},
+			"response": []
+		},
+		{
+			"name": "Creating a policy group",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('set policy id',function(){\r",
+							"    const {response} =pm.response.json();\r",
+							"    pm.environment.set('policygroupid',response.id);\r",
+							"})\r",
+							"pm.test('adding policy group',function(){\r",
+							"    const {response} =pm.response.json();\r",
+							"    pm.environment.set('policygroupname',response.name);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJXUWFWNHhJc1E2Qjhfa1ByRWQ0Y1R3TnVrdnVYMGpoeVc5ZXEzN0JvYWk4In0.eyJleHAiOjE2OTQ1NDkyMDIsImlhdCI6MTY5NDUxMzIwMiwianRpIjoiNjVjMjAyODQtZWQxNC00OTgyLTg1MjgtMjI3NTRkMzU4YzQ0IiwiaXNzIjoiaHR0cHM6Ly9pYW0udGZnb3ZpZGJiLnNhbmRib3gtcGxheWdyb3VuZC5jb20vYXV0aC9yZWFsbXMvbW9zaXAiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiZjBjMmE3MTQtMjViOS00ODI5LTliZTItZjI2NGY5NjczMzFlIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibW9zaXAtcG1zLWNsaWVudCIsInNlc3Npb25fc3RhdGUiOiIxYWM5OGI4Yi0zMGUwLTQ5MWUtODhlOS03ZTc3ZGJlNGM3MjYiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLW1vc2lwIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBhZGRfb2lkY19jbGllbnQgZ2V0X2NlcnRpZmljYXRlIHVwbG9hZF9jZXJ0aWZpY2F0ZSB1cGRhdGVfb2lkY19jbGllbnQgcHJvZmlsZSIsInNpZCI6IjFhYzk4YjhiLTMwZTAtNDkxZS04OGU5LTdlNzdkYmU0YzcyNiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6Im1hZGh1IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiMTEwMDcxIiwiZ2l2ZW5fbmFtZSI6Im1hZGh1IiwiZW1haWwiOiJtYWRodTEyM0BnbWFpbC5jb20ifQ.X3SXBe75Y5n63F-IJbFL2smm1RU3_Vzmj5Xx1fayixZQA1cxESiUFJNjlfkcDUrWmrq8m5a1bTrbcVSMYGO_1R2V-vDN3N2yb4Y5OkGNNDljer4hBDXI0Bz9SZZqqfDgCXg9S25vVVUGl5Pka7UHEM7XQKSskGVw6JTiQXaAUKIrm5qXKOHbGeqNKfKA0ncFy8uBUFMBL6fMjVfJnpnjL7d4zx6Ms-Qd90nbeDy47zin2TH0dQis-TxDaRf1yDZODpAfZYpbh2IPetOfSpSlScvSB_Z7YlDOELV57CfKDD67zQIzcQKQrw-4rCqUNjE5-Tcv-CEZafmtQ16B5iwExg",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"desc\":\"policygroup\",\r\n    \"name\":\"policygroup{{$randomInt}}\"\r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"LTS\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/policymanager/policies/group/new",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"policymanager",
+						"policies",
+						"group",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Creating Auth Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('set policy id',function(){\r",
+							"    const {response} =pm.response.json();\r",
+							"    pm.environment.set('authpolicyid',response.id);\r",
+							"})\r",
+							"pm.test('set policy name',function(){\r",
+							"    const {response} =pm.response.json();\r",
+							"    pm.environment.set('authpolicyname',response.name);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"string\",\r\n    \"metadata\": {},\r\n    \"request\": {\r\n        \"desc\": \"no desd\",\r\n        \"name\": \"policy{{$randomInt}}\",\r\n        \"version\": \"1.0\",\r\n        \"policies\": {\r\n            \"authTokenType\": \"policy\",\r\n            \"allowedKycAttributes\": [\r\n                {\r\n                    \"attributeName\": \"fullName\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"gender\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"phone\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"email\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"dateOfBirth\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"city\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"face\"\r\n                },\r\n                {\r\n                    \"attributeName\": \"addressLine1\"\r\n                }\r\n            ],\r\n            \"allowedAuthTypes\": [\r\n                {\r\n                    \"authSubType\": \"IRIS\",\r\n                    \"authType\": \"bio\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"FINGER\",\r\n                    \"authType\": \"bio\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"otp\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"FACE\",\r\n                    \"authType\": \"bio\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"otp-request\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"kyc\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"demo\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"kycauth\",\r\n                    \"mandatory\": false\r\n                },\r\n                {\r\n                    \"authSubType\": \"\",\r\n                    \"authType\": \"kycexchange\",\r\n                    \"mandatory\": false\r\n                }\r\n            ]\r\n        },\r\n        \"policyGroupName\": \"{{policygroupname}}\",\r\n        \"policyType\": \"Auth\"\r\n    },\r\n    \"requesttime\": \"{{requesttime}}\",\r\n    \"version\": \"LTS\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/policymanager/policies",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"policymanager",
+						"policies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publishing the Policy and PolicyGroup",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/v1/policymanager/policies/{{authpolicyid}}/group/{{policygroupid}}/publish",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"policymanager",
+						"policies",
+						"{{authpolicyid}}",
+						"group",
+						"{{policygroupid}}",
+						"publish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Auth partner",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setEnvironmentVariable('requesttime', (new Date()).toISOString());\r",
+							"const number = pm.variables.replaceIn('{{$randomInt}}') ;\r",
+							"pm.environment.set(\"partnerid\",number);\r",
+							"const jar = pm.cookies.jar();\r",
+							"jar.getAll(pm.request.url, function (error, cookies) {\r",
+							"// error -\r",
+							"// cookies - }); jar.clear(pm.request.url, function (error) {\r",
+							"// error -\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('set auth partner id',function(){",
+							"    const {response} =pm.response.json();",
+							"    pm.environment.set('auth-partner-id',response.partnerId);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"type": "text",
+						"value": "Authorization=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI4VGFhc0pqOXF6ZHI1QTVWN05zRkxKbTFIRXNoTlVTY1p0a3Z3T0Q3cmJvIn0.eyJqdGkiOiI2MTM3YzgxZi0wN2IwLTQyNjAtODBhOC03MDgwNjgxOGZlN2QiLCJleHAiOjE2NDU1NjUyNzUsIm5iZiI6MCwiaWF0IjoxNjQ1NTI5Mjc1LCJpc3MiOiJodHRwczovL2RldjIubW9zaXAubmV0L2tleWNsb2FrL2F1dGgvcmVhbG1zL21vc2lwIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjlmZTY4ZGUyLTNhMDAtNDhlYS04YWI5LTU2NDM3YmFkYTY3OCIsInR5cCI6IkJlYXJlciIsImF6cCI6Im1vc2lwLXBhcnRuZXItY2xpZW50IiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiNzkyOWFmMTktNzJkYi00YWNhLThkYTctN2IxMzVmNzI2ZTBjIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwczovL2RldjIubW9zaXAubmV0Il0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJQQVJUTkVSIiwiUkVHSVNUUkFUSU9OX09GRklDRVIiLCJSRUdJU1RSQVRJT05fT1BFUkFUT1IiLCJSRVNJREVOVCIsIlBBUlRORVJNQU5BR0VSIiwiREVWSUNFX1BST1ZJREVSIiwiUkVHSVNUUkFUSU9OX1BST0NFU1NPUiIsIkNFTlRSQUxfQURNSU4iLCJSRUdJU1RSQVRJT05fQURNSU4iLCJQUkVfUkVHSVNUUkFUSU9OIiwiUE1TX0FETUlOIiwiWk9OQUxfQURNSU4iLCJSRUdJU1RSQVRJT05fU1VQRVJWSVNPUiIsIklEX0FVVEhFTlRJQ0FUSU9OIiwiUFJFUkVHIiwiQ0VOVFJBTF9BUFBST1ZFUiIsIm9mZmxpbmVfYWNjZXNzIiwiWk9OQUxfQVBQUk9WRVIiLCJQQVJUTkVSX0FETUlOIiwidW1hX2F1dGhvcml6YXRpb24iLCJHTE9CQUxfQURNSU4iLCJNSVNQIiwiUFJFX1JFR0lTVFJBVElPTl9BRE1JTiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IjExMDA2OCAxMTAwNjgiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIxMTAwNjgiLCJnaXZlbl9uYW1lIjoiMTEwMDY4IiwiZmFtaWx5X25hbWUiOiIxMTAwNjgiLCJlbWFpbCI6IjExMDA2OEB4eXouY29tIn0.ZbzijOrttKsf2_7-Ro5AUs9Bxd2Y1oMEvKOXecTv45TLpTkFQfGLSFRR1i111HE3Qv-DVcZ0llm6gbW3pJuqxoukcc_6tJmyuIcvxALzsneH0pDee6eO41DBBMPW1_LuO5nadHcs1dFDVBQHoDOanHgZ3zgHqJU6QQDrgtn8kyWzW5aOX3QnN8-HznKuha1AS6iF5f29LxlFGZDiR111pnIgiUYVopb_Ix7HAZ1W3V3Rhlcgr-HgKiCiHLXddUA3uEzz5PyOOd8gsGmZaPdf_xXthip4eTyukv1h6XVfMGpt6c-733ebep1yUgvwCKTQeGMQf8-vEilVPQtnHGWapA"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"string\",\r\n    \"metadata\": {},\r\n    \"request\": {\r\n        \"address\": \"{{$randomStreetName}}\",\r\n        \"contactNumber\": \"{{$randomPhoneNumber}}\",\r\n        \"emailId\": \"{{$randomEmail}}\",\r\n        \"organizationName\": \"{{partnerid}}\",\r\n        \"partnerId\": \"{{partnerid}}\",\r\n        \"partnerType\": \"Auth_Partner\",\r\n        \"policyGroup\": \"{{policygroupname}}\"\r\n    },\r\n    \"requesttime\": \"{{requesttime}}\",\r\n    \"version\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get ca,intermediate and partner certificates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"var data = JSON.stringify(jsonData.caCertificate);\r",
+							"console.log(data);\r",
+							"pm.environment.set(\"ca-certificate\",data);\r",
+							"var data2 = JSON.stringify(jsonData.interCertificate);\r",
+							"console.log(data2);\r",
+							"pm.environment.set(\"intermediate-cert\",data2);\r",
+							"var data3 = JSON.stringify(jsonData.partnerCertificate);\r",
+							"console.log(data3);\r",
+							"pm.environment.set(\"leaf-certificate\",data3);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ3TVVyRUZWYTJfY2ZfV0pldGU1VDFLUk93aUFxaWd4NV9scUJEbi1tcVdvIn0.eyJleHAiOjE2NjQyMDkzNTIsImlhdCI6MTY2NDE3MzM1MiwianRpIjoiMmNkYTczMjQtZWIyYi00NGE3LTlmMjMtN2U5NjM5M2EzM2VhIiwiaXNzIjoiaHR0cHM6Ly9pYW0ucWE1Lm1vc2lwLm5ldC9hdXRoL3JlYWxtcy9tb3NpcCIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI0ZDk3NGVlZi0xODZhLTRjZGQtOWZmZC1mNDhmM2E3ZThiZGYiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJtb3NpcC1wbXMtY2xpZW50Iiwic2Vzc2lvbl9zdGF0ZSI6IjU4MThjMGY2LWFmY2ItNDY4ZC04ZTdhLTNlYjQ4NDQ4OTFiZSIsImFjciI6IjEiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJQQVJUTkVSX0FETUlOIiwidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLW1vc2lwIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiNTgxOGMwZjYtYWZjYi00NjhkLThlN2EtM2ViNDg0NDg5MWJlIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoibWFkaHUgbmFnZXNoIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiMTEwMDc1IiwiZ2l2ZW5fbmFtZSI6Im1hZGh1IiwiZmFtaWx5X25hbWUiOiJuYWdlc2giLCJlbWFpbCI6ImRzYWRzQGdtYWlsLmNvbSJ9.TovpEOuqlW7wPMRi0-ahyTj7YnvjVvcwvbq7tfKqRhXS7WVlGmw8YpCv9ztkXb59horigF-RSwIHFaw9rNPBMA_KRkKiKbj0kTDV3luTxoN-16ECE6eAlRhARcMhJxVTCXfTYJU_06Yo0NNkzHbgif3DbSKI_D_AmkMdylyIyd_v5_YLMkYPAr8B-7a83e6jzzq0blRkmRkiM3qBkJDsOcXYpoG-k9NPqu4pA3eFpyqZajo_fZ3nR-fbDKoved-RyPgqA4T4XWAu7ozWI474_DLvuABQOAwDFRFY6meB98qmfX_1SfYhxKZX4rMZajf9vj_geihIMiMBSAcNBaa_Qg",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/v1/identity/generatePartnerKeys?partnerName={{partnerid}}&partnerType=RELYING_PARTY",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"v1",
+						"identity",
+						"generatePartnerKeys"
+					],
+					"query": [
+						{
+							"key": "partnerName",
+							"value": "{{partnerid}}"
+						},
+						{
+							"key": "partnerType",
+							"value": "RELYING_PARTY"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Uploading CA certificate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\":{{ca-certificate}},\r\n    \"partnerDomain\": \"Auth\"\r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"certificate",
+						"ca",
+						"upload"
+					]
+				},
+				"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates,namely CACERT,INTERCERT,PARTNERCERT."
+			},
+			"response": []
+		},
+		{
+			"name": "Uploading intermediate certificate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\":{{intermediate-cert}},\r\n    \"partnerDomain\": \"Auth\"\r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"string\"\r\n  }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/certificate/ca/upload",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"certificate",
+						"ca",
+						"upload"
+					]
+				},
+				"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates,namely CACERT,INTERCERT,PARTNERCERT."
+			},
+			"response": []
+		},
+		{
+			"name": "Uploading Auth partner certificate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"var data = JSON.stringify(jsonData.response.signedCertificateData);\r",
+							"console.log(data);\r",
+							"pm.environment.set(\"signedpartnercert\",data);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const jar = pm.cookies.jar();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"certificateData\":{{leaf-certificate}},\r\n    \"partnerDomain\": \"Auth\",\r\n    \"partnerId\": \"{{partnerid}}\"\r\n \r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/certificate/upload",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"certificate",
+						"upload"
+					]
+				},
+				"description": "Here It is assumed that the Partner will provide MOSIP with the three certificates,namely CACERT,INTERCERT,PARTNERCERT.This partner cert will be signed back and shared with the response as well"
+			},
+			"response": []
+		},
+		{
+			"name": "Activate Auth partner",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"string\",\n  \"version\": \"string\",\n  \"requesttime\": \"2022-12-06T10:00:28.156Z\",\n  \"metadata\": {},\n  \"request\": {\n    \"status\": \"ACTIVE\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/{{partnerid}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"{{partnerid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mapping partner with policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('adding apikeyrequestID',function(){\r",
+							"    const {response} =pm.response.json();\r",
+							"    pm.environment.set('mappingkey',response.mappingkey);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"policyName\": \"{{authpolicyname}}\",\r\n    \"useCaseDescription\": \"mapping Partner to policyName\"\r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/{{partnerid}}/policy/map",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"{{partnerid}}",
+						"policy",
+						"map"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Approve partner policy mapping request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.unset(\"requesttime\");\r",
+							"postman.setGlobalVariable('requesttime', (new Date()).toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Authorization={{authtoken}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Cookie",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"string\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"status\": \"Approved\"\r\n  },\r\n  \"requesttime\": \"{{requesttime}}\",\r\n  \"version\": \"string\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/partnermanager/partners/policy/{{mappingkey}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"partnermanager",
+						"partners",
+						"policy",
+						"{{mappingkey}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth API",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"string\",\r\n  \"version\": \"string\",\r\n  \"requesttime\": \"{{$isoTimestamp}}\",\r\n  \"metadata\": {},\r\n  \"request\": {\r\n    \"userName\":\"karthik\",\r\n    \"password\": \"Techno@123\",\r\n    \"appId\": \"partner\",\r\n    \"clientId\": \"mosip-pms-client\",\r\n    \"clientSecret\": \"Y6jFPViBltr7W8Pg\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/authmanager/authenticate/internal/useridPwd",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"authmanager",
+						"authenticate",
+						"internal",
+						"useridPwd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create OIDC client",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate clientId\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response.clientId).to.eql(pm.collectionVariables.get(\"clientId\"));",
+							"});",
+							"",
+							"pm.test(\"Validate status\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.response.status).to.eql(\"ACTIVE\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authorizationToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \n    \"requestTime\": \"{{$isoTimestamp}}\",\n    \"request\": {\n        \"clientId\": \"123client\",\n        \"clientName\": \"123partner\",\n        \"publicKey\": {\n    \"kty\": \"RSA\",\n    \"e\": \"AQAB\",\n    \"use\": \"enc\",\n    \"kid\": \"bZYEvZZOK98d9p1aq641J3IIYBn-hBPl1kaSj1o6UcU\",\n    \"alg\": \"RSA1_5\",\n    \"n\": \"q8Umsquu4P_xQKMn4B387S78v7f6rppHbG7aBeeHOKP1mB3fWBXbNZTM_ltlKo5bSkjQmpKBkYmY78HESSR7jS1PWV1Vnvk0FkzYBS5CRDTnWP8NsAB9i8ct3NLP2K8IZsB0bIVMrC-UasZHnZpYLxN77xvwJw71HUhJ6WQ5YsIobQ_FUDuOl3PBQ2h_fOPOSK-zDD-pND932z-l8SfXV8SiavRyC7MX4sqFVZQuUMIUYj_ihMxL5olrmPJoFUZrH32MAbk5O1CldyPryrLLCmRyNHN0Ktl0LXmlkmtqthgWrceb8bGnZP_nrqj5RGkOg_cJLu8lrKjyka0ehYH1iw\"\n},\n        \"relyingPartyId\": \"{{partnerid}}\",\n        \"userClaims\": [\n            \"name\",\n            \"email\",\n            \"gender\",\n            \"phone_number\",\n            \"picture\",\n            \"birthdate\"\n        ],\n        \"authContextRefs\": [\n            \"mosip:idp:acr:static-code\",\n            \"mosip:idp:acr:biometrics\",\n            \"mosip:idp:acr:generated-code\"\n        ],\n        \"logoUri\": \"https://avatars.githubusercontent.com/u/60199888\",\n        \"redirectUris\": [\n             \"https://totp-binder-service.onpremdev.idencode.link/qrcode\"\n        ],\n        \"grantTypes\": [\n            \"authorization_code\"\n        ],\n        \"clientAuthMethods\": [\n            \"private_key_jwt\"\n        ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/esignet/client-mgmt/oidc-client",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"esignet",
+						"client-mgmt",
+						"oidc-client"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
