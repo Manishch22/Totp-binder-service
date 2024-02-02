@@ -34,13 +34,13 @@ ENV TOTP_PERIOD=$totp_period
 ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
 ENV TOTP_ALGORITHM=$totp_algorithm
 ```
-# API Documentation:
+## API Documentation:
 
 
 
 ## Deployment:
 
-Use the helm charts present [here](helm/) for deployment.
+Use the helm charts present [here](helm/) for deployment. Add the host name according to deploying environment domain in global configuration map.
 
 # TOTP Key Identity Binding UI:
 
