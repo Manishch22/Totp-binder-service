@@ -35,8 +35,7 @@ ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
 ENV TOTP_ALGORITHM=$totp_algorithm
 ```
 ## API Documentation:
-
-
+Please refer TOTP_Binder_Service_API_Documentation.docx in [this](docs/) for API documentation.
 
 ## Deployment:
 
@@ -152,7 +151,7 @@ Post creation of above data, update the following configurations.
  * mosip.iam.module.clientID and mosip.iam.module.privatekey in totp-binder-service configurations.
  * client Id needs to be updated in UI environment variables.
 
-Once above configurations are over, please follow this [user manual]() to test the application.
+Once above configurations are over, please follow TOTP_User_Guide.docx in [this](docs/) to test the application.
 
 
 
