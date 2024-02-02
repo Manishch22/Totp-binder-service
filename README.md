@@ -25,7 +25,7 @@ This service is responsible for generating TOTP key and binding to the UIN/VID o
 **Note :**
  Configuration file name for this application should be 'totp-binder-service-default.properties'.
 
-## UI Configurations :
+## UI/Environment Configurations :
 ```
 ENV TOTP_BINDER_SERVICE_URL=$totp_binder_service_url
 ENV CLIENT_ID=$client_id
@@ -34,10 +34,17 @@ ENV TOTP_PERIOD=$totp_period
 ENV TOTP_BINDER_UI_PUBLIC_URL=$totp_binder_ui_PublicUrl
 ENV TOTP_ALGORITHM=$totp_algorithm
 ```
+# API Documentation:
+
+
 
 ## Deployment:
 
 Use the helm charts present [here](helm/) for deployment.
+
+# TOTP Key Identity Binding UI:
+
+This user interface will bind TOTP key with resident/user UIN/VID. This code is available totp-binder-ui repo.
 
 # Usage of TOTP 
 
